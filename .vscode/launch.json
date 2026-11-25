@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run RAVLINE",
+      "request": "launch",
+      "mainClass": "ravline.Main",
+      "vmArgs": "--enable-native-access=ALL-UNNAMED"
+    }
+  ]
+}
