@@ -1,0 +1,8 @@
+# Compiled Java output
+out/
+build/
+dist/
+*.class
+
+# NetBeans local metadata
+nbproject/private/
