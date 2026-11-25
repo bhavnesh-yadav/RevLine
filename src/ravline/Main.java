@@ -63,7 +63,7 @@ public class Main {
         System.out.println("  Tip: enter B at any prompt to cancel and return here.");
     }
 
-    // Shows cars one at a time. Search starts at the requested ID; N/P move and B returns.
+    // Shows cars one at a time. N/P move, a number jumps to that list position, S searches by name, and B returns.
     private static void browseCars(boolean search) throws SQLException {
         showSection(search ? "SEARCH CAR" : "CAR INVENTORY");
         List<Car> cars = Database.getCars();
@@ -99,7 +99,8 @@ public class Main {
             System.out.printf("  Price    : Rs. %.2f%n", cars.get(position).getPrice());
             System.out.printf("  Status   : %s%n", cars.get(position).getStatus());
             System.out.println("  ----------------------------------------------");
-            System.out.println("  [N] Next car   [P] Previous car   [B] Main menu");
+            System.out.println("  [N] Next   [P] Previous   [S] Search name   [B] Main menu");
+            System.out.println("  Or enter a car number from 1 to " + cars.size() + " to jump directly.");
             String command = readText("  Your choice: ");
 
             if (command.equalsIgnoreCase("N")) {
@@ -110,10 +111,40 @@ public class Main {
                 else System.out.println("This is the first car.");
             } else if (command.equalsIgnoreCase("B")) {
                 browsing = false;
+            } else if (command.equalsIgnoreCase("S")) {
+                String searchName = readText("  Enter brand or model to search: ").toLowerCase();
+                int matchPosition = findCarPosition(cars, searchName);
+                if (matchPosition == -1) {
+                    System.out.println("No car matched that name. Still showing the current car.");
+                } else {
+                    position = matchPosition;
+                    System.out.println("Showing the first matching car. Use N/P to browse nearby cars.");
+                }
             } else {
-                System.out.println("Enter N, P, or B.");
+                try {
+                    int carNumber = Integer.parseInt(command);
+                    if (carNumber >= 1 && carNumber <= cars.size()) {
+                        position = carNumber - 1;
+                    } else {
+                        System.out.println("Enter a car number from 1 to " + cars.size() + ".");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Enter N, P, S, B, or a car number.");
+                }
             }
         }
+    }
+
+    // Finds the first car whose brand or model contains the search text; returns -1 when there is no match.
+    private static int findCarPosition(List<Car> cars, String searchName) {
+        for (int i = 0; i < cars.size(); i++) {
+            Car car = cars.get(i);
+            String carName = (car.getBrand() + " " + car.getModel()).toLowerCase();
+            if (carName.contains(searchName)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     // Reads car details and asks Database to save a new car.
